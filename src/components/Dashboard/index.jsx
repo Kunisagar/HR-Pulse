@@ -1,11 +1,11 @@
-import {Component} from 'react'
+import { Component } from "react";
 
-import Header from '../Header'
-import Sidebar from '../Sidebar'
+import Header from "../Header";
+import Sidebar from "../Sidebar";
 
-import {Users, UserCheck, CalendarX, Clock3} from 'lucide-react'
+import { Users, UserCheck, CalendarX, Clock3 } from "lucide-react";
 
-import './index.css'
+import "./index.css";
 
 class Dashboard extends Component {
   state = {
@@ -20,19 +20,19 @@ class Dashboard extends Component {
     departments: [],
 
     recentActivity: [],
-  }
+  };
 
   componentDidMount() {
-    this.getDashboardData()
+    this.getDashboardData();
   }
 
   getDashboardData = async () => {
     try {
       const response = await fetch(
-        'http://localhost:3000/api/dashboard/summary',
-      )
+        "https://hr-pulse-backend.onrender.com/api/dashboard/summary",
+      );
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (response.ok) {
         this.setState({
@@ -47,12 +47,12 @@ class Dashboard extends Component {
           departments: data.departments || [],
 
           recentActivity: data.recentActivity || [],
-        })
+        });
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
 
   render() {
     const {
@@ -67,13 +67,13 @@ class Dashboard extends Component {
       departments,
 
       recentActivity,
-    } = this.state
+    } = this.state;
 
-    const role = (localStorage.getItem('role') || '').toLowerCase()
+    const role = (localStorage.getItem("role") || "").toLowerCase();
 
-    const employeeName = localStorage.getItem('userName') || ''
+    const employeeName = localStorage.getItem("userName") || "";
 
-    const employeeId = localStorage.getItem('employeeId') || ''
+    const employeeId = localStorage.getItem("employeeId") || "";
 
     return (
       <div>
@@ -85,7 +85,7 @@ class Dashboard extends Component {
           <div className="dashboard-content">
             <h1 className="dashboard-title">Dashboard</h1>
 
-            {role !== 'employee' && (
+            {role !== "employee" && (
               <div className="cards-container">
                 <div className="card">
                   <div className="icon-box blue">
@@ -137,7 +137,7 @@ class Dashboard extends Component {
               </div>
             )}
 
-            {role === 'employee' ? (
+            {role === "employee" ? (
               <div className="bottom-section">
                 <div className="activity-card">
                   <h2>Employee Information</h2>
@@ -167,7 +167,7 @@ class Dashboard extends Component {
                   {departments.length === 0 ? (
                     <p>No Department Data</p>
                   ) : (
-                    departments.map(each => (
+                    departments.map((each) => (
                       <p key={each.department}>
                         {each.department}:{each.total}
                         Employees
@@ -182,7 +182,7 @@ class Dashboard extends Component {
                   {recentActivity.length === 0 ? (
                     <p>No Recent Activity</p>
                   ) : (
-                    recentActivity.map(each => (
+                    recentActivity.map((each) => (
                       <p key={each.created_at}>{each.action}</p>
                     ))
                   )}
@@ -192,8 +192,8 @@ class Dashboard extends Component {
           </div>
         </div>
       </div>
-    )
+    );
   }
 }
 
-export default Dashboard
+export default Dashboard;

@@ -1,63 +1,63 @@
-import {Component} from 'react'
+import { Component } from "react";
 
-import Cookies from 'js-cookie'
+import Cookies from "js-cookie";
 
-import {withRouter, Link} from 'react-router-dom'
+import { withRouter, Link } from "react-router-dom";
 
-import hrPulseLogo from '../../assets/HRpulse.png'
+import hrPulseLogo from "../../assets/HRpulse.png";
 
-import './index.css'
+import "./index.css";
 
 class Login extends Component {
   state = {
-    username: '',
-    password: '',
+    username: "",
+    password: "",
     showPassword: false,
-    errorMsg: '',
-  }
+    errorMsg: "",
+  };
 
   componentDidMount() {
-    const jwtToken = Cookies.get('jwt_token')
+    const jwtToken = Cookies.get("jwt_token");
 
     if (jwtToken) {
-      const {history} = this.props
+      const { history } = this.props;
 
-      history.replace('/')
+      history.replace("/");
     }
   }
 
-  onChangeUserName = e => {
+  onChangeUserName = (e) => {
     this.setState({
       username: e.target.value,
-    })
-  }
+    });
+  };
 
-  onChangePassword = e => {
+  onChangePassword = (e) => {
     this.setState({
       password: e.target.value,
-    })
-  }
+    });
+  };
 
-  onToggleShowPassword = e => {
+  onToggleShowPassword = (e) => {
     this.setState({
       showPassword: e.target.checked,
-    })
-  }
+    });
+  };
 
-  submitForm = async e => {
-    e.preventDefault()
+  submitForm = async (e) => {
+    e.preventDefault();
 
-    const {username, password} = this.state
+    const { username, password } = this.state;
 
     try {
       const response = await fetch(
-        'http://localhost:3000/api/auth/login',
+        "https://hr-pulse-backend.onrender.com/api/auth/login",
 
         {
-          method: 'POST',
+          method: "POST",
 
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
 
           body: JSON.stringify({
@@ -66,62 +66,62 @@ class Login extends Component {
             password,
           }),
         },
-      )
+      );
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (response.ok) {
         Cookies.set(
-          'jwt_token',
+          "jwt_token",
 
           data.jwtToken,
 
           {
             expires: 30,
           },
-        )
+        );
 
         localStorage.setItem(
-          'employeeId',
+          "employeeId",
 
           data.user.employeeId,
-        )
+        );
 
         localStorage.setItem(
-          'userName',
+          "userName",
 
           data.user.name,
-        )
+        );
 
         localStorage.setItem(
-          'userEmail',
+          "userEmail",
 
           data.user.email,
-        )
+        );
 
         localStorage.setItem(
-          'role',
+          "role",
 
           data.user.role,
-        )
+        );
 
-        const {history} = this.props
+        const { history } = this.props;
 
-        history.replace('/')
+        history.replace("/");
       } else {
         this.setState({
-          errorMsg: data.message || 'Login Failed',
-        })
+          errorMsg: data.message || "Login Failed",
+        });
       }
     } catch (error) {
       this.setState({
-        errorMsg: 'Server Error',
-      })
+        errorMsg: "Server Error",
+      });
     }
-  }
+  };
 
   render() {
-    const {username, password, showPassword, errorMsg} = this.state
+    const { username, password, showPassword, errorMsg } = this.state;
 
     return (
       <div className="login-bg">
@@ -144,7 +144,7 @@ class Login extends Component {
             <label className="label">PASSWORD</label>
 
             <input
-              type={showPassword ? 'text' : 'password'}
+              type={showPassword ? "text" : "password"}
               className="input"
               value={password}
               onChange={this.onChangePassword}
@@ -173,8 +173,8 @@ class Login extends Component {
           </form>
         </div>
       </div>
-    )
+    );
   }
 }
 
-export default withRouter(Login)
+export default withRouter(Login);

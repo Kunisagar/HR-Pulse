@@ -1,9 +1,9 @@
-import {Component} from 'react'
+import { Component } from "react";
 
-import Header from '../Header'
-import Sidebar from '../Sidebar'
+import Header from "../Header";
+import Sidebar from "../Sidebar";
 
-import './index.css'
+import "./index.css";
 
 class ManageLeaves extends Component {
   state = {
@@ -19,38 +19,44 @@ class ManageLeaves extends Component {
 
     onLeaveToday: 0,
 
-    search: '',
+    search: "",
 
-    status: 'All',
+    status: "All",
 
     isLoading: true,
-  }
+  };
 
   componentDidMount() {
-    this.getLeaves()
+    this.getLeaves();
   }
 
   getLeaves = async () => {
     try {
-      const response = await fetch('http://localhost:3000/api/manage-leaves')
+      const response = await fetch(
+        "https://hr-pulse-backend.onrender.com/api/manage-leaves",
+      );
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (response.ok) {
-        const pending = data.filter(each => each.status === 'Pending').length
+        const pending = data.filter((each) => each.status === "Pending").length;
 
-        const approved = data.filter(each => each.status === 'Approved').length
+        const approved = data.filter(
+          (each) => each.status === "Approved",
+        ).length;
 
-        const rejected = data.filter(each => each.status === 'Rejected').length
+        const rejected = data.filter(
+          (each) => each.status === "Rejected",
+        ).length;
 
-        const today = new Date().toISOString().split('T')[0]
+        const today = new Date().toISOString().split("T")[0];
 
         const onLeaveToday = data.filter(
-          each =>
-            each.status === 'Approved' &&
+          (each) =>
+            each.status === "Approved" &&
             each.start_date <= today &&
             each.end_date >= today,
-        ).length
+        ).length;
 
         this.setState({
           leaves: data,
@@ -66,100 +72,100 @@ class ManageLeaves extends Component {
           onLeaveToday,
 
           isLoading: false,
-        })
+        });
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
 
-  approveLeave = async id => {
+  approveLeave = async (id) => {
     await fetch(
-      `http://localhost:3000/api/manage-leaves/${id}/approve`,
+      `https://hr-pulse-backend.onrender.com/api/manage-leaves/${id}/approve`,
 
       {
-        method: 'PUT',
+        method: "PUT",
       },
-    )
+    );
 
-    this.getLeaves()
-  }
+    this.getLeaves();
+  };
 
-  rejectLeave = async id => {
+  rejectLeave = async (id) => {
     await fetch(
-      `http://localhost:3000/api/manage-leaves/${id}/reject`,
+      `https://hr-pulse-backend.onrender.com/api/manage-leaves/${id}/reject`,
 
       {
-        method: 'PUT',
+        method: "PUT",
       },
-    )
+    );
 
-    this.getLeaves()
-  }
+    this.getLeaves();
+  };
 
-  onSearch = e => {
-    const value = e.target.value
+  onSearch = (e) => {
+    const value = e.target.value;
 
     const {
       leaves,
 
       status,
-    } = this.state
+    } = this.state;
 
-    let updated = leaves.filter(each =>
-      (each.employee_name || 'Unknown User')
+    let updated = leaves.filter((each) =>
+      (each.employee_name || "Unknown User")
 
         .toLowerCase()
 
         .includes(value.toLowerCase()),
-    )
+    );
 
-    if (status !== 'All') {
-      updated = updated.filter(each => each.status === status)
+    if (status !== "All") {
+      updated = updated.filter((each) => each.status === status);
     }
 
     this.setState({
       search: value,
 
       filteredLeaves: updated,
-    })
-  }
+    });
+  };
 
-  onChangeStatus = e => {
-    const value = e.target.value
+  onChangeStatus = (e) => {
+    const value = e.target.value;
 
     const {
       leaves,
 
       search,
-    } = this.state
+    } = this.state;
 
-    let updated = leaves.filter(each =>
-      (each.employee_name || 'Unknown User')
+    let updated = leaves.filter((each) =>
+      (each.employee_name || "Unknown User")
 
         .toLowerCase()
 
         .includes(search.toLowerCase()),
-    )
+    );
 
-    if (value !== 'All') {
-      updated = updated.filter(each => each.status === value)
+    if (value !== "All") {
+      updated = updated.filter((each) => each.status === value);
     }
 
     this.setState({
       status: value,
 
       filteredLeaves: updated,
-    })
-  }
+    });
+  };
 
   calculateDays = (start, end) => {
-    const s = new Date(start)
+    const s = new Date(start);
 
-    const e = new Date(end)
+    const e = new Date(end);
 
-    return Math.ceil((e - s) / (1000 * 60 * 60 * 24)) + 1
-  }
+    return Math.ceil((e - s) / (1000 * 60 * 60 * 24)) + 1;
+  };
 
   render() {
     const {
@@ -178,7 +184,7 @@ class ManageLeaves extends Component {
       status,
 
       isLoading,
-    } = this.state
+    } = this.state;
 
     return (
       <div>
@@ -272,20 +278,20 @@ class ManageLeaves extends Component {
                       <td
                         colSpan="9"
                         style={{
-                          textAlign: 'center',
+                          textAlign: "center",
 
-                          padding: '30px',
+                          padding: "30px",
                         }}
                       >
                         No Leave Requests Found
                       </td>
                     </tr>
                   ) : (
-                    filteredLeaves.map(each => (
+                    filteredLeaves.map((each) => (
                       <tr key={each.id}>
                         <td>{each.employee_id}</td>
 
-                        <td>{each.employee_name || 'Unknown User'}</td>
+                        <td>{each.employee_name || "Unknown User"}</td>
 
                         <td>{each.leave_type}</td>
 
@@ -308,7 +314,7 @@ class ManageLeaves extends Component {
                         </td>
 
                         <td>
-                          {each.status === 'Pending' ? (
+                          {each.status === "Pending" ? (
                             <>
                               <button
                                 className="approve-btn"
@@ -325,7 +331,7 @@ class ManageLeaves extends Component {
                               </button>
                             </>
                           ) : (
-                            '--'
+                            "--"
                           )}
                         </td>
                       </tr>
@@ -337,8 +343,8 @@ class ManageLeaves extends Component {
           </div>
         </div>
       </div>
-    )
+    );
   }
 }
 
-export default ManageLeaves
+export default ManageLeaves;

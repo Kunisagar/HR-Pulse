@@ -1,9 +1,9 @@
-import {Component} from 'react'
+import { Component } from "react";
 
-import Header from '../Header'
-import Sidebar from '../Sidebar'
+import Header from "../Header";
+import Sidebar from "../Sidebar";
 
-import './index.css'
+import "./index.css";
 
 class MyLeaves extends Component {
   state = {
@@ -20,60 +20,60 @@ class MyLeaves extends Component {
     casual: 10,
 
     earned: 10,
-  }
+  };
 
   componentDidMount() {
-    this.getLeaves()
+    this.getLeaves();
   }
 
   calculateDays = (startDate, endDate) => {
-    const start = new Date(startDate)
+    const start = new Date(startDate);
 
-    const end = new Date(endDate)
+    const end = new Date(endDate);
 
-    return Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1
-  }
+    return Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
+  };
 
   getLeaves = async () => {
     try {
-      const employeeId = localStorage.getItem('employeeId')
+      const employeeId = localStorage.getItem("employeeId");
 
       const response = await fetch(
-        `http://localhost:3000/api/leaves/${employeeId}`,
-      )
+        `https://hr-pulse-backend.onrender.com/api/leaves/${employeeId}`,
+      );
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (response.ok) {
-        let used = 0
+        let used = 0;
 
-        let sick = 10
-        let casual = 10
-        let earned = 10
+        let sick = 10;
+        let casual = 10;
+        let earned = 10;
 
-        data.forEach(each => {
-          if (each.status === 'Approved') {
+        data.forEach((each) => {
+          if (each.status === "Approved") {
             const days = this.calculateDays(
               each.start_date,
 
               each.end_date,
-            )
+            );
 
-            used += days
+            used += days;
 
-            if (each.leave_type === 'Sick') {
-              sick -= days
+            if (each.leave_type === "Sick") {
+              sick -= days;
             }
 
-            if (each.leave_type === 'Casual') {
-              casual -= days
+            if (each.leave_type === "Casual") {
+              casual -= days;
             }
 
-            if (each.leave_type === 'Earned') {
-              earned -= days
+            if (each.leave_type === "Earned") {
+              earned -= days;
             }
           }
-        })
+        });
 
         this.setState({
           leaves: data,
@@ -87,12 +87,12 @@ class MyLeaves extends Component {
           casual,
 
           earned,
-        })
+        });
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
 
   render() {
     const {
@@ -109,7 +109,7 @@ class MyLeaves extends Component {
       casual,
 
       earned,
-    } = this.state
+    } = this.state;
 
     return (
       <div>
@@ -189,7 +189,7 @@ class MyLeaves extends Component {
                       <td colSpan="7">No Leave Records Found</td>
                     </tr>
                   ) : (
-                    leaves.map(each => (
+                    leaves.map((each) => (
                       <tr key={each.id}>
                         <td>{each.employee_id}</td>
 
@@ -226,8 +226,8 @@ ${each.status.toLowerCase()}`}
           </div>
         </div>
       </div>
-    )
+    );
   }
 }
 
-export default MyLeaves
+export default MyLeaves;

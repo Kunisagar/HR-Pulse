@@ -1,19 +1,19 @@
-import {Component} from 'react'
+import { Component } from "react";
 
-import Header from '../Header'
-import Sidebar from '../Sidebar'
+import Header from "../Header";
+import Sidebar from "../Sidebar";
 
-import './index.css'
+import "./index.css";
 
 class ApplyLeave extends Component {
   state = {
-    leaveType: 'Sick',
+    leaveType: "Sick",
 
-    startDate: '',
+    startDate: "",
 
-    endDate: '',
+    endDate: "",
 
-    reason: '',
+    reason: "",
 
     days: 0,
 
@@ -24,51 +24,51 @@ class ApplyLeave extends Component {
     rejected: 0,
 
     leaves: [],
-  }
+  };
 
   componentDidMount() {
-    this.getLeaveData()
+    this.getLeaveData();
   }
 
   calculateDays = (start, end) => {
     if (!start || !end) {
-      return 0
+      return 0;
     }
 
-    const s = new Date(start)
+    const s = new Date(start);
 
-    const e = new Date(end)
+    const e = new Date(end);
 
-    return Math.ceil((e - s) / (1000 * 60 * 60 * 24)) + 1
-  }
+    return Math.ceil((e - s) / (1000 * 60 * 60 * 24)) + 1;
+  };
 
   getLeaveData = async () => {
     try {
-      const employeeId = localStorage.getItem('employeeId')
+      const employeeId = localStorage.getItem("employeeId");
 
       const response = await fetch(
-        `http://localhost:3000/api/leaves/${employeeId}`,
-      )
+        `https://hr-pulse-backend.onrender.com/api/leaves/${employeeId}`,
+      );
 
-      const data = await response.json()
+      const data = await response.json();
 
-      let pending = 0
-      let approved = 0
-      let rejected = 0
+      let pending = 0;
+      let approved = 0;
+      let rejected = 0;
 
-      data.forEach(each => {
-        if (each.status === 'Pending') {
-          pending++
+      data.forEach((each) => {
+        if (each.status === "Pending") {
+          pending++;
         }
 
-        if (each.status === 'Approved') {
-          approved++
+        if (each.status === "Approved") {
+          approved++;
         }
 
-        if (each.status === 'Rejected') {
-          rejected++
+        if (each.status === "Rejected") {
+          rejected++;
         }
-      })
+      });
 
       this.setState({
         leaves: data,
@@ -78,41 +78,41 @@ class ApplyLeave extends Component {
         approved,
 
         rejected,
-      })
+      });
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
 
-  onChangeType = e => {
+  onChangeType = (e) => {
     this.setState({
       leaveType: e.target.value,
-    })
-  }
+    });
+  };
 
-  onChangeStart = e => {
+  onChangeStart = (e) => {
     this.setState({
       startDate: e.target.value,
-    })
-  }
+    });
+  };
 
-  onChangeEnd = e => {
-    const end = e.target.value
+  onChangeEnd = (e) => {
+    const end = e.target.value;
 
-    const {startDate} = this.state
+    const { startDate } = this.state;
 
     this.setState({
       endDate: end,
 
       days: this.calculateDays(startDate, end),
-    })
-  }
+    });
+  };
 
-  onReason = e => {
+  onReason = (e) => {
     this.setState({
       reason: e.target.value,
-    })
-  }
+    });
+  };
 
   applyLeave = async () => {
     const {
@@ -123,18 +123,18 @@ class ApplyLeave extends Component {
       endDate,
 
       reason,
-    } = this.state
+    } = this.state;
 
-    const employeeId = localStorage.getItem('employeeId')
+    const employeeId = localStorage.getItem("employeeId");
 
     const response = await fetch(
-      'http://localhost:3000/api/leaves/apply',
+      "https://hr-pulse-backend.onrender.com/api/leaves/apply",
 
       {
-        method: 'POST',
+        method: "POST",
 
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
 
         body: JSON.stringify({
@@ -149,14 +149,14 @@ class ApplyLeave extends Component {
           reason,
         }),
       },
-    )
+    );
 
-    const data = await response.json()
+    const data = await response.json();
 
-    alert(data.message)
+    alert(data.message);
 
-    this.getLeaveData()
-  }
+    this.getLeaveData();
+  };
 
   render() {
     const {
@@ -177,7 +177,7 @@ class ApplyLeave extends Component {
       rejected,
 
       leaves,
-    } = this.state
+    } = this.state;
 
     return (
       <div>
@@ -261,7 +261,7 @@ class ApplyLeave extends Component {
                 </thead>
 
                 <tbody>
-                  {leaves.map(each => (
+                  {leaves.map((each) => (
                     <tr key={each.id}>
                       <td>{each.leave_type}</td>
 
@@ -282,8 +282,8 @@ class ApplyLeave extends Component {
           </div>
         </div>
       </div>
-    )
+    );
   }
 }
 
-export default ApplyLeave
+export default ApplyLeave;

@@ -1,28 +1,28 @@
-import {Component} from 'react'
-import {withRouter} from 'react-router-dom'
+import { Component } from "react";
+import { withRouter } from "react-router-dom";
 
 class Signup extends Component {
   state = {
-    name: '',
-    email: '',
-    password: '',
-    role: 'Employee',
-  }
+    name: "",
+    email: "",
+    password: "",
+    role: "Employee",
+  };
 
-  submitForm = async e => {
-    e.preventDefault()
+  submitForm = async (e) => {
+    e.preventDefault();
 
-    const {name, email, password, role, department} = this.state
+    const { name, email, password, role, department } = this.state;
 
     try {
       const response = await fetch(
-        'http://localhost:3000/api/auth/register',
+        "https://hr-pulse-backend.onrender.com/api/auth/register",
 
         {
-          method: 'POST',
+          method: "POST",
 
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
 
           body: JSON.stringify({
@@ -33,27 +33,27 @@ class Signup extends Component {
             department,
           }),
         },
-      )
+      );
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (response.ok) {
-        alert('New account created successfully 🎉')
+        alert("New account created successfully 🎉");
 
-        const {history} = this.props
+        const { history } = this.props;
 
-        history.replace('/login')
+        history.replace("/login");
       } else {
         this.setState({
           errorMsg: data.message,
-        })
+        });
       }
     } catch (error) {
       this.setState({
-        errorMsg: 'Server Error',
-      })
+        errorMsg: "Server Error",
+      });
     }
-  }
+  };
 
   render() {
     return (
@@ -65,7 +65,7 @@ class Signup extends Component {
             <input
               placeholder="Name"
               className="input"
-              onChange={e =>
+              onChange={(e) =>
                 this.setState({
                   name: e.target.value,
                 })
@@ -75,7 +75,7 @@ class Signup extends Component {
             <input
               placeholder="Email"
               className="input"
-              onChange={e =>
+              onChange={(e) =>
                 this.setState({
                   email: e.target.value,
                 })
@@ -86,7 +86,7 @@ class Signup extends Component {
               placeholder="Password"
               className="input"
               type="password"
-              onChange={e =>
+              onChange={(e) =>
                 this.setState({
                   password: e.target.value,
                 })
@@ -95,7 +95,7 @@ class Signup extends Component {
 
             <select
               className="input"
-              onChange={e =>
+              onChange={(e) =>
                 this.setState({
                   role: e.target.value,
                 })
@@ -114,8 +114,8 @@ class Signup extends Component {
           </form>
         </div>
       </div>
-    )
+    );
   }
 }
 
-export default withRouter(Signup)
+export default withRouter(Signup);

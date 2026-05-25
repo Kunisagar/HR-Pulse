@@ -1,97 +1,97 @@
-import {Component} from 'react'
+import { Component } from "react";
 
-import Header from '../Header'
-import Sidebar from '../Sidebar'
+import Header from "../Header";
+import Sidebar from "../Sidebar";
 
-import './index.css'
+import "./index.css";
 
 class Attendance extends Component {
   state = {
     attendance: [],
 
-    search: '',
+    search: "",
 
     isLoading: true,
 
     currentPage: 1,
 
     itemsPerPage: 8,
-  }
+  };
 
   componentDidMount() {
-    this.getAttendance()
+    this.getAttendance();
   }
 
   getAttendance = async () => {
     try {
-      const role = localStorage.getItem('role')
+      const role = localStorage.getItem("role");
 
-      const employeeId = localStorage.getItem('employeeId')
+      const employeeId = localStorage.getItem("employeeId");
 
       const response = await fetch(
-        `http://localhost:3000/api/attendance?role=${role}&employeeId=${employeeId}`,
-      )
+        `https://hr-pulse-backend.onrender.com/api/attendance?role=${role}&employeeId=${employeeId}`,
+      );
 
-      const data = await response.json()
+      const data = await response.json();
 
-      const formattedData = data.map(each => ({
+      const formattedData = data.map((each) => ({
         id: each.employee_id,
 
         name: each.employee_name,
 
-        checkIn: each.check_in || '--:--',
+        checkIn: each.check_in || "--:--",
 
-        checkOut: each.check_out || '--:--',
+        checkOut: each.check_out || "--:--",
 
         status: each.status,
 
-        hours: each.work_hours || '0h 0m',
+        hours: each.work_hours || "0h 0m",
 
         attendanceDate: each.attendance_date,
-      }))
+      }));
 
-      const today = new Date().toISOString().split('T')[0]
+      const today = new Date().toISOString().split("T")[0];
 
       const todayAttendance = formattedData.find(
-        each => each.attendanceDate === today,
-      )
+        (each) => each.attendanceDate === today,
+      );
 
       this.setState({
         attendance: formattedData,
 
-        checkIn: todayAttendance?.checkIn || '--:--',
+        checkIn: todayAttendance?.checkIn || "--:--",
 
-        checkOut: todayAttendance?.checkOut || '--:--',
+        checkOut: todayAttendance?.checkOut || "--:--",
 
         isLoading: false,
-      })
+      });
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
 
-  onSearch = e => {
+  onSearch = (e) => {
     this.setState({
       search: e.target.value,
 
       currentPage: 1,
-    })
-  }
+    });
+  };
 
   onCheckIn = async () => {
     try {
-      const employeeId = localStorage.getItem('employeeId')
+      const employeeId = localStorage.getItem("employeeId");
 
-      const employeeName = localStorage.getItem('userName')
+      const employeeName = localStorage.getItem("userName");
 
       const response = await fetch(
-        'http://localhost:3000/api/attendance/check-in',
+        "https://hr-pulse-backend.onrender.com/api/attendance/check-in",
 
         {
-          method: 'POST',
+          method: "POST",
 
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
 
           body: JSON.stringify({
@@ -99,66 +99,66 @@ class Attendance extends Component {
             employeeName,
           }),
         },
-      )
+      );
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (response.ok) {
-        alert(data.message)
+        alert(data.message);
 
-        this.getAttendance()
+        this.getAttendance();
       } else {
-        alert(data.message)
+        alert(data.message);
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
 
-      alert('Check In Failed')
+      alert("Check In Failed");
     }
-  }
+  };
 
   onCheckOut = async () => {
     try {
-      const employeeId = localStorage.getItem('employeeId')
+      const employeeId = localStorage.getItem("employeeId");
 
       const response = await fetch(
-        'http://localhost:3000/api/attendance/check-out',
+        "https://hr-pulse-backend.onrender.com/api/attendance/check-out",
 
         {
-          method: 'POST',
+          method: "POST",
 
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
 
           body: JSON.stringify({
             employeeId,
           }),
         },
-      )
+      );
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (response.ok) {
-        this.getAttendance()
+        this.getAttendance();
       } else {
-        alert(data.message)
+        alert(data.message);
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
 
-  changePage = page => {
+  changePage = (page) => {
     this.setState({
       currentPage: page,
-    })
-  }
+    });
+  };
 
   render() {
-    const role = (localStorage.getItem('role') || 'Employee').toLowerCase()
+    const role = (localStorage.getItem("role") || "Employee").toLowerCase();
 
-    const currentUser = localStorage.getItem('userName')
+    const currentUser = localStorage.getItem("userName");
 
     const {
       attendance,
@@ -170,25 +170,25 @@ class Attendance extends Component {
       currentPage,
 
       itemsPerPage,
-    } = this.state
+    } = this.state;
 
     const filteredData =
-      role === 'employee'
+      role === "employee"
         ? attendance
-        : attendance.filter(each =>
+        : attendance.filter((each) =>
             each.name
               .toLowerCase()
 
               .includes(search.toLowerCase()),
-          )
+          );
 
-    const lastIndex = currentPage * itemsPerPage
+    const lastIndex = currentPage * itemsPerPage;
 
-    const firstIndex = lastIndex - itemsPerPage
+    const firstIndex = lastIndex - itemsPerPage;
 
-    const currentEmployees = filteredData.slice(firstIndex, lastIndex)
+    const currentEmployees = filteredData.slice(firstIndex, lastIndex);
 
-    const totalPages = Math.ceil(filteredData.length / itemsPerPage)
+    const totalPages = Math.ceil(filteredData.length / itemsPerPage);
 
     return (
       <div>
@@ -198,7 +198,7 @@ class Attendance extends Component {
           <Sidebar />
 
           <div className="attendance-content">
-            {role === 'employee' && (
+            {role === "employee" && (
               <div className="check-card">
                 <div>
                   <p>{new Date().toDateString()}</p>
@@ -207,12 +207,12 @@ class Attendance extends Component {
 
                   <h2>
                     Check In:
-                    {attendance.length > 0 ? attendance[0].checkIn : '--:--'}
+                    {attendance.length > 0 ? attendance[0].checkIn : "--:--"}
                   </h2>
 
                   <h2>
                     Check Out:
-                    {attendance.length > 0 ? attendance[0].checkOut : '--:--'}
+                    {attendance.length > 0 ? attendance[0].checkOut : "--:--"}
                   </h2>
                 </div>
 
@@ -231,12 +231,12 @@ class Attendance extends Component {
             <div className="attendance-top">
               <h2>Attendance</h2>
 
-              {role !== 'employee' && (
+              {role !== "employee" && (
                 <button className="export-btn">Export</button>
               )}
             </div>
 
-            {role !== 'employee' && (
+            {role !== "employee" && (
               <input
                 className="search-input"
                 placeholder="Search employee..."
@@ -272,7 +272,7 @@ class Attendance extends Component {
                         <td colSpan="6">No attendance found</td>
                       </tr>
                     ) : (
-                      currentEmployees.map(each => (
+                      currentEmployees.map((each) => (
                         <tr key={each.id + each.checkIn}>
                           <td>{each.id}</td>
 
@@ -293,13 +293,13 @@ class Attendance extends Component {
                   </tbody>
                 </table>
 
-                {role !== 'employee' && (
+                {role !== "employee" && (
                   <div className="pagination">
                     {[...Array(totalPages)].map((_, index) => (
                       <button
                         key={index}
                         className={
-                          currentPage === index + 1 ? 'active-page' : ''
+                          currentPage === index + 1 ? "active-page" : ""
                         }
                         onClick={() => this.changePage(index + 1)}
                       >
@@ -313,8 +313,8 @@ class Attendance extends Component {
           </div>
         </div>
       </div>
-    )
+    );
   }
 }
 
-export default Attendance
+export default Attendance;
